@@ -5,6 +5,8 @@ Docstring for spiral_tree_traversal
 2. diameter of tree
 3. level order traversal
 4. graphical print of  tree using rich module
+5. lowest common ancestor of a tree
+
 '''
 
 
@@ -22,6 +24,13 @@ class Node:
     def __str__(self):
         return str(self.key)
 
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return self.key == other.key
+        if isinstance(other, int):
+            return self.key == other
+        return False
+
 
 class Tree:
 
@@ -29,7 +38,7 @@ class Tree:
         self.root = None
         self.len = 0
         self.gtree = rtree("This is rich tree")
-    
+
     def __len__(self):
         ''' return number of the nodes in the tree'''
         return self.len
@@ -60,7 +69,7 @@ class Tree:
             if node.right: recur(gnode, node.right)
 
         recur(self.gtree, self.root)
-        print(str("Rich Graphical Representation Of The Tree").center(100,"="))
+        print(str("Rich Graphical Representation Of The Tree").center(100,"*"))
         print(self.gtree)
 
     def print_diameter(self):
@@ -77,9 +86,9 @@ class Tree:
             return max(lh, rh)+1
 
         diameter(self.root)
-        print(str("Diameter of the Tree").center(100,'='))
+        print(str("Diameter of the Tree").center(100,'-'))
         print(mxd)
-    
+
     def insert_node(self, key):
         ''' Insert one node at a time to the tree iteratively '''
         new_node = Node(key)
@@ -103,14 +112,14 @@ class Tree:
                         break
                     else:
                         temp = temp.right
-    
+
     def spiral_print_of_tree(self):
         from queue import LifoQueue
         s1 = LifoQueue()
         s2 = LifoQueue()
         s1.put(self.root)
         while not s1.empty() or not s2.empty():
-            
+
             while not s1.empty():
                 temp = s1.get()
                 print(temp, end=' ')
@@ -125,11 +134,33 @@ class Tree:
                 if temp.right: s1.put(temp.right)
             print()
 
+    def lca(self, n1 , n2):
+
+        def do(node):
+            nonlocal n1, n2
+            if  node==None:
+                return None
+
+            if n1 == node or n2 == node:
+                return node
+
+            left = do(node.left)
+            right = do(node.right)
+
+            if left and right:
+                return node
+
+            return left if left else right
+
+        print(str(f"Lowest Common Ancestor of Two Node {n1} and {n2}").center(100, "*"))
+        print(do(self.root))
+
 
 
 tree = Tree()
 tree_list = [10, 22, 33 ,20, 14, 1, 2, 0, 89, 21, 11, 4, 100, 31]
-tree_list = [10, 9, 30, 29, 20, 60, 70]
+# tree_list = [10, 9, 30, 29, 20, 60, 70]
+
 print(tree_list)
 for key in tree_list:
     tree.insert_node(key)
@@ -141,3 +172,4 @@ tree.print_rich_tree()
 print(str("Spiral Printing The Tree").center(100, "-"))
 tree.spiral_print_of_tree()
 tree.print_diameter()
+tree.lca(11, 100)
